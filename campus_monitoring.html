@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Monitoring - College Monitoring System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="campus_monitoring.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" 
+          crossorigin="anonymous" 
+          onerror="console.warn('Chart.js CDN blocked - graceful fallback active.');">
+  </script>
+  <script>
+    window.ChartJSFallback = function() {
+      // Gracefully degrade if Chart.js fails to load
+      window.Chart = window.chartjsLib || { 
+        Line: class {}, 
+        Bar: class {}, 
+        Pie: class {}, 
+        Doughnut: class {},
+        destroy: () => {}
+      };
+    };
+  </script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+<h1 class="page-title">Student Monitoring</h1>
+      </div>
+      <div class="header-right">
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+        <button class="notification-bell" onclick="toggleNotifications()" title="Notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge" id="notificationBadge">0</span>
+        </button>
+        <div class="user-info">
+          <button class="user-name" onclick="window.location.href='admin.html'" >ADMIN</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+<div class="logo"></div>
+        <span>Monitoring</span>
+      </div>
+      <ul class="sidebar-menu">
+        <li class="nav-item" data-tab="upload">
+          <span class="nav-icon">📤</span>
+          <span class="nav-text">Student View</span>
+        </li>
+        <li class="nav-item" data-tab="logs">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Surveillance Logs</span>
+        </li>
+        <li class="nav-item" data-tab="alerts">
+          <span class="nav-icon">⚠️</span>
+          <span class="nav-text">Alerts</span>
+        </li>
+      
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Student View / Upload Tab -->
+      <section class="tab-content" id="upload-tab">
+        <div class="content-grid">
+          <!-- Upload & Analysis Card -->
+          <div class="card upload-card full-width">
+            <div class="card-header">
+              <h2>📤 Campus Surveillance Upload</h2>
+              <p class="subtitle">Upload surveillance image for analysis</p>
+            </div>
+            <form id="uploadForm">
+  <div class="form-group full-width" style="margin-bottom: 20px;">
+    <label>Location</label>
+    <select id="cameraLocation" required>
+      <option value="">Select Location</option>
+      <option value="Main Gate">Main Gate</option>
+      <option value="Campus Parking">Parking Lot</option>
+      <option value="Library Entrance">Library</option>
+      <option value="Hostel Area">Hostel</option>
+      <option value="Lecture Halls">Lecture Halls</option>
+    </select>
+  </div>
+  <div class="form-group full-width" style="margin-bottom: 20px;">
+    <label>Upload Image (JPG/PNG)</label>
+    <input type="file" id="imageUpload" accept="image/*" required>
+  </div>
+  <button type="submit" class="btn-primary">🚀 Analyze Image</button>
+</form>
+            <div id="uploadPreview" class="image-preview" style="display:none;">
+              <img id="previewImg" alt="Preview">
+              <div class="analysis-result" id="quickAnalysis"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Logs Tab -->
+      <section class="tab-content" id="logs-tab">
+        <div class="content-grid">
+          <div class="card logs-table">
+            <div class="card-header">
+              <h2>📋 Surveillance Logs</h2>
+              <p class="subtitle">Recent monitoring logs and analysis results</p>
+            </div>
+            <div class="table-container">
+              <table id="logsTable">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Camera</th>
+                    <th>Students Detected</th>
+                    <th>Status</th>
+                    <th>Image</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="logsTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alerts Tab -->
+      <section class="tab-content" id="alerts-tab">
+        <div class="content-grid">
+          <div class="card alerts-table">
+            <div class="card-header">
+              <h2>⚠️ Active Alerts</h2>
+            </div>
+            <div class="table-container">
+              <table id="alertsTable">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Details</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="alertsTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+   
+           
+          
+
+
+    </main>
+  </div>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeImageModal()">&times;</span>
+      <img id="modalImg" alt="Full Image">
+      <div id="modalDetails"></div>
+    </div>
+  </div>
+
+  <script src="campus_monitoring.js"></script>
+  <script>
+    // Theme toggle functionality (same as prediction)
+    function initTheme() {
+      const savedTheme = localStorage.getItem('cms_theme');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        updateThemeIcon();
+      }
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+      const isDark = document.body.classList.contains('dark-theme');
+      localStorage.setItem('cms_theme', isDark ? 'dark' : 'light');
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const btn = document.getElementById('themeToggle');
+      if (btn) {
+        btn.innerHTML = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+      }
+    }
+
+    // Sidebar toggle
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+
+    // Tab navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+        
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        const tabId = item.getAttribute('data-tab') + '-tab';
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
+    // Modal close
+    window.onclick = function(event) {
+      const modal = document.getElementById('imageModal');
+      if (event.target == modal) {
+        closeImageModal();
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+    });
+
+    // Notification functions
+    function toggleNotifications() {
+      const panel = document.getElementById('notificationsPanel');
+      const backdrop = document.getElementById('notificationsBackdrop');
+      panel.classList.toggle('open');
+      backdrop.classList.toggle('open');
+      if (panel.classList.contains('open')) {
+        markAllRead();
+      }
+    }
+
+    function closeNotifications() {
+      document.getElementById('notificationsPanel').classList.remove('open');
+      document.getElementById('notificationsBackdrop').classList.remove('open');
+    }
+
+    function markAllRead() {
+      notifications.forEach(n => n.read = true);
+      saveNotifications();
+      updateNotificationBadge();
+      renderNotifications();
+      document.getElementById('panelUnreadCount').textContent = 'All read';
+    }
+
+    function clearAllNotifications() {
+      notifications = [];
+      saveNotifications();
+      updateNotificationBadge();
+      renderNotifications();
+    }
+
+    function deleteNotification(id) {
+      notifications = notifications.filter(n => n.id !== id);
+      saveNotifications();
+      updateNotificationBadge();
+      renderNotifications();
+    }
+
+    let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+
+    function generateAlert(type, details) {
+      const alert = {
+        id: Date.now(),
+        type: type,
+        message: `📢 ${details}`,
+        timestamp: new Date().toLocaleString(),
+        read: false
+      };
+      notifications.unshift(alert);
+      saveNotifications();
+      updateNotificationBadge();
+      renderNotifications();
+
+      // Auto-open panel briefly for visibility + bell pulse
+      const panel = document.getElementById('notificationsPanel');
+      const bell = document.querySelector('.notification-bell');
+      const backdrop = document.getElementById('notificationsBackdrop');
+
+      panel.classList.add('open');
+      backdrop.classList.add('open');
+      bell.style.animation = 'pulse 1s ease-in-out';
+
+      setTimeout(() => {
+        panel.classList.remove('open');
+        backdrop.classList.remove('open');
+        bell.style.animation = '';
+      }, 3000);
+    }
+
+    function saveNotifications() {
+      localStorage.setItem('notifications', JSON.stringify(notifications));
+    }
+
+    function updateNotificationBadge() {
+      const unreadCount = notifications.filter(n => !n.read).length;
+      const badge = document.getElementById('notificationBadge');
+      badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+      badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+    }
+
+    function renderNotifications() {
+      const list = document.getElementById('notificationsList');
+      const unread = notifications.filter(n => !n.read).length;
+      const countEl = document.getElementById('panelUnreadCount');
+      if (countEl) countEl.textContent = `${unread} unread`;
+
+      if (notifications.length === 0) {
+        if (list) list.innerHTML = '<li class="notification-item"><div style="text-align:center;color:var(--text-light);padding:40px 20px;">No notifications</div></li>';
+        return;
+      }
+
+      if (list) {
+        list.innerHTML = notifications.slice(0, 20).map(n => `
+          <li class="notification-item ${n.read ? '' : 'unread'}">
+            <div class="notification-message">
+              <span class="alert-icon alert-${n.type}">
+                ${n.type === 'success' ? '✅' : n.type === 'info' ? 'ℹ️' : n.type === 'warning' ? '⚠️' : '📢'}
+              </span>
+              ${n.message}
+            </div>
+            <div class="notification-time">${n.timestamp}</div>
+            <button class="delete-notification" onclick="deleteNotification(${n.id})">Delete</button>
+          </li>
+        `).join('');
+      }
+    }
+
+    // Initialize notifications on load
+    window.addEventListener('load', function() {
+      updateNotificationBadge();
+      renderNotifications();
+    });
+
+  </script>
+
+  <!-- Notifications Panel -->
+  <div id="notificationsPanel" class="notifications-panel">
+    <div class="notifications-header">
+      <h4><i class="fas fa-bell"></i> Notifications</h4>
+      <span class="notifications-count" id="panelUnreadCount">0 unread</span>
+      <button class="close-btn" onclick="closeNotifications()">×</button>
+    </div>
+    <ul id="notificationsList"></ul>
+    <div class="notifications-footer">
+      <button class="mark-read-btn" onclick="markAllRead()">Mark all read</button>
+      <button class="clear-all-btn" onclick="clearAllNotifications()">Clear all</button>
+    </div>
+  </div>
+
+  <!-- Notifications Backdrop -->
+  <div class="notifications-backdrop" id="notificationsBackdrop" onclick="closeNotifications()"></div>
+
+</body>
+</html>

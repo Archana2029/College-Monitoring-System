@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Prediction System - College Monitoring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="prediction.css">
+</head>
+<body>
+    <!-- Navbar - Exact copy from attendance.html -->
+    <nav class="navbar">
+        <h2><i class="fas fa-chart-line"></i> Prediction System</h2>
+        <div class="navbar-right">
+            <button class="notification-bell" onclick="toggleNotifications()" title="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+            <button class="logout" onclick="goToTeacher()">Teacher</button>
+        </div>
+    </nav>
+
+    
+
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="content-wrapper single-page">
+            <div class="section-tabs">
+<button class="tab-btn active" data-tab="marks"><i class="fas fa-edit"></i> Marks Entry</button>
+                <button class="tab-btn" data-tab="predict"><i class="fas fa-magic"></i> Prediction</button>
+                <button class="tab-btn" data-tab="report"><i class="fas fa-file-alt"></i> Report</button>
+            </div>
+            
+            <!-- Marks Entry Tab -->
+            <div id="marksSection" class="tab-content active">
+                <div class="card">
+                    <h2>📝 Marks Entry</h2>
+                    <div class="filters form-row">
+                        <div><label>Department:</label><select id="marksDept" onchange="updateMarksSubjects()"><option value="">Select</option><option value="BCA">BCA</option><option value="BBA">BBA</option><option value="BSc">BSc</option><option value="BCom">BCom</option><option value="BA">BA</option></select></div>
+                        <div><label>Year:</label><select id="marksYear" onchange="updateMarksSubjects()"><option value="">Select</option><option value="1st year">1st year</option><option value="2nd year">2nd year</option><option value="3rd year">3rd year</option></select></div>
+                        <div><label>Subject:</label><select id="marksSub"><option value="">Select</option></select></div>
+                        <button class="btn" onclick="loadMarksStudents()">Load Students</button>
+                        <button class="btn" onclick="exportMarksCSV()">📥 CSV</button>
+                        <button class="btn" onclick="printMarks()">🖨️ Print</button>
+                    </div>
+                    <div id="marksStudentsTable"></div>
+                </div>
+            </div>
+
+            <!-- Prediction Tab -->
+           <!-- Prediction Tab -->
+<div id="predictSection" class="tab-content">
+    <div class="card">
+        <h2>🔮 Performance Prediction</h2>
+        <div class="filters form-row">
+            <div><label>Department:</label><select id="predDept" onchange="updatePredSubjects()"><option value="">Select</option><option value="BCA">BCA</option><option value="BBA">BBA</option><option value="BSc">BSc</option><option value="BCom">BCom</option><option value="BA">BA</option></select></div>
+            <div><label>Year:</label><select id="predYear" onchange="updatePredSubjects()"><option value="">Select</option><option value="1st year">1st year</option><option value="2nd year">2nd year</option><option value="3rd year">3rd year</option></select></div>
+            <div><label>Subject:</label><select id="predSub"><option value="">Select</option></select></div>
+            <button class="btn" onclick="loadPredStudents()">Load Students</button>
+            <button class="btn success" onclick="runPredictionForAll()">🔮 Predict All</button>
+        </div>
+        <div id="predStudentsTable"></div>
+    </div>
+</div>
+
+            <!-- Report Tab -->
+           <!-- Report Tab -->
+<div id="reportSection" class="tab-content">
+    <div class="card">
+        <h2>📊 Prediction Report</h2>
+        <div class="filters form-row">
+            <div><label>Department:</label><select id="reportDept"><option value="">All</option><option value="BCA">BCA</option><option value="BBA">BBA</option><option value="BSc">BSc</option><option value="BCom">BCom</option><option value="BA">BA</option></select></div>
+            <div><label>Year:</label><select id="reportYear"><option value="">All</option><option value="1st year">1st year</option><option value="2nd year">2nd year</option><option value="3rd year">3rd year</option></select></div>
+            <div><label>Subject:</label><select id="reportSub"><option value="">All</option></select></div>
+<button class="btn" onclick="loadReport()">Load Report</button>
+            <button class="btn" onclick="printReport()">🖨️ Print</button>
+        </div>
+        <table id="reportTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Dept</th><th>Year</th><th>Sub</th><th>Grade (/40)</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+    </main>
+
+    <!-- Notifications Panel - Exact copy -->
+    <div id="notificationsPanel" class="notifications-panel">
+        <div class="notifications-header">
+            <h4><i class="fas fa-bell"></i> Notifications</h4>
+            <span class="notifications-count" id="panelUnreadCount">0 unread</span>
+            <button class="close-btn" onclick="closeNotifications()">×</button>
+        </div>
+        <ul id="notificationsList"></ul>
+        <div class="notifications-footer">
+            <button class="mark-read-btn" onclick="markAllRead()">Mark all read</button>
+            <button class="clear-all-btn" onclick="clearAllNotifications()">Clear all</button>
+        </div>
+    </div>
+    <div class="notifications-backdrop" id="notificationsBackdrop" onclick="closeNotifications()"></div>
+
+    
+
+    <script src="prediction.js"></script>
+    <script>
+function showSection(sectionId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    // Remove active from all tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    // Remove active from all sidebar nav
+    document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+    
+    // Show target section
+    const targetSection = document.getElementById(sectionId + 'Section');
+    if (targetSection) targetSection.classList.add('active');
+    
+    // Activate target tab button
+    const targetTabBtn = document.querySelector(`.tab-btn[data-tab="${sectionId}"]`);
+    if (targetTabBtn) targetTabBtn.classList.add('active');
+    
+    // Activate target sidebar nav
+    const targetNav = document.getElementById(sectionId + 'Nav');
+    if (targetNav) targetNav.classList.add('active');
+    
+    if (typeof toggleSidebar === 'function') toggleSidebar();
+    
+    // Load data for specific sections
+    if (sectionId === 'marks' && typeof updateMarksSubjects === 'function') updateMarksSubjects();
+    if (sectionId === 'predict' && typeof updatePredSubjects === 'function') updatePredSubjects();
+}
+       
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const icon = document.getElementById('themeIcon');
+            icon.className = document.body.classList.contains('dark-theme') ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('predictionTheme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+        }
+
+        function goToTeacher() {
+            window.location.href = 'teacher.html';
+        }
+
+        let notifications = JSON.parse(localStorage.getItem('predictionNotifications')) || [];
+        // Notifications (copied)
+        function toggleNotifications() {
+            document.getElementById('notificationsPanel').classList.toggle('open');
+            document.getElementById('notificationsBackdrop').classList.toggle('open');
+            renderNotifications();
+        }
+        function closeNotifications() {
+            document.getElementById('notificationsPanel').classList.remove('open');
+            document.getElementById('notificationsBackdrop').classList.remove('open');
+        }
+       
+        // Load theme
+        if (localStorage.getItem('predictionTheme') === 'dark') toggleTheme();
+        updateNotificationBadge();
+        
+        // Initialize tabs on load
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                showSection(tabId);
+            });
+        });
+        
+        showSection('marks'); 
+        // Default to Marks Entry
+
+// Notification functions
+function updateNotificationBadge() {
+    const notifications = JSON.parse(localStorage.getItem('predictionNotifications')) || [];
+    const unread = notifications.filter(n => !n.read).length;
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+        badge.textContent = unread > 99 ? '99+' : unread;
+        badge.style.display = unread ? 'flex' : 'none';
+    }
+}
+
+function renderNotifications() {
+    const notifications = JSON.parse(localStorage.getItem('predictionNotifications')) || [];
+    const list = document.getElementById('notificationsList');
+    if (list) {
+        list.innerHTML = notifications.slice(0,20).map(n => 
+            `<li class="notification-item ${n.read ? '' : 'unread'}">
+                <div class="notification-message">${n.message}</div>
+                <div class="notification-time">${n.timestamp}</div>
+            </li>`
+        ).join('') || '<li style="text-align:center;color:var(--text-light);padding:40px;">No notifications</li>';
+        
+        const panelCount = document.getElementById('panelUnreadCount');
+        if (panelCount) {
+            panelCount.textContent = notifications.filter(n => !n.read).length + ' unread';
+        }
+    }
+}
+
+function markAllRead() {
+    const notifications = JSON.parse(localStorage.getItem('predictionNotifications')) || [];
+    notifications.forEach(n => n.read = true);
+    localStorage.setItem('predictionNotifications', JSON.stringify(notifications));
+    updateNotificationBadge();
+    renderNotifications();
+}
+
+function clearAllNotifications() {
+    localStorage.setItem('predictionNotifications', JSON.stringify([]));
+    updateNotificationBadge();
+    renderNotifications();
+}
+
+// Update toggleNotifications to render notifications
+const originalToggle = toggleNotifications;
+toggleNotifications = function() {
+    document.getElementById('notificationsPanel').classList.toggle('open');
+    document.getElementById('notificationsBackdrop').classList.toggle('open');
+    renderNotifications();
+}
+
+// Initialize badge on load
+updateNotificationBadge();
+
+    </script>
+
+<!-- Hidden elements for sidebar (if missing) -->
+<!-- Sidebar - Add this after body tag -->
+<div class="sidebar" id="sidebar">
+    <ul>
+        <li id="marksNav" onclick="showSection('marks')">📝 Marks Entry</li>
+        <li id="predictNav" onclick="showSection('predict')">🔮 Prediction</li>
+        <li id="reportNav" onclick="showSection('report')">📊 Report</li>
+    </ul>
+</div>
+
+</body>
+</html>

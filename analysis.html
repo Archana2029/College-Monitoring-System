@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📊 Analysis Model </title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="chart.min.js"></script>
+  <link rel="stylesheet" href="analysis.css">
+</head>
+<body>
+
+  <header class="main-header">
+  <div class="header-left">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1 class="page-title">📊 Analysis Dashboard</h1>
+  </div>
+  
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+    
+    <div class="user-info">
+      <span class="user-avatar">📊</span>
+      <a href="admin.html" class="user-name admin-link">Admin</a>
+    </div>
+    
+    <button class="notification-bell" onclick="toggleNotifications()" title="Notifications">
+      🔔
+      <span class="notification-badge" id="notificationBadge">0</span>
+    </button>
+  </div>
+</header>
+<!-- Navbar - EXACT COPY from index.html -->
+  
+       
+
+    <!-- Sidebar - SAME as prediction/attendance -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">📊</div>
+        <span>Analysis</span>
+      </div>
+      <ul class="sidebar-menu">
+        <li class="nav-item active" data-tab="attendance">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Attendance Analysis</span>
+        </li>
+        <li class="nav-item" data-tab="prediction">
+          <span class="nav-icon">🔮</span>
+          <span class="nav-text">Prediction Charts</span>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Hero Stats - Dynamic -->
+      <div class="analytics-hero">
+        <h1>📊 Analysis Overview</h1>
+
+        <div class="hero-stats" id="heroStats">
+          <!-- Stats populated by JS -->
+        </div>
+      </div>
+
+
+
+      <!-- Tab Contents - Charts load per tab -->
+      <div id="attendanceTab" class="tab-content active">
+        <div class="section-title">📊 Attendance Analysis - Interactive Charts</div>
+        
+        <!-- Filters Section -->
+        <div class="filter-section" style="background: var(--bg-card); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: var(--shadow);">
+          <div class="filters-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+            
+            <!-- Daily/Monthly Toggle -->
+            <div class="filter-group">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">📅 Period Type:</label>
+              <select id="attendancePeriod" onchange="updateAttendanceCharts()" style="width: 100%; padding: 8px 12px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg-light); color: var(--text-primary); cursor: pointer;">
+                <option value="daily">Daily</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            
+            <!-- Year Selection -->
+            <div class="filter-group">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">📚 Year:</label>
+              <select id="attendanceYear" onchange="updateAttendanceCharts()" style="width: 100%; padding: 8px 12px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg-light); color: var(--text-primary); cursor: pointer;">
+                <option value="">All Years</option>
+                <option value="1st year">1st Year</option>
+                <option value="2nd year">2nd Year</option>
+                <option value="3rd year">3rd Year</option>
+              </select>
+            </div>
+            
+            <!-- Department Selection -->
+            <div class="filter-group">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">🏢 Department:</label>
+              <select id="attendanceDept" onchange="updateAttendanceCharts()" style="width: 100%; padding: 8px 12px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg-light); color: var(--text-primary); cursor: pointer;">
+                <option value="">All Departments</option>
+                <option value="BCA">BCA</option>
+                <option value="BCom">BCom</option>
+                <option value="BBA">BBA</option>
+                <option value="BSc">BSc</option>
+                <option value="BA">BA</option>
+              </select>
+            </div>
+            
+            <!-- Subject Selection -->
+            <div class="filter-group">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">📖 Subject:</label>
+              <select id="attendanceSubject" onchange="updateAttendanceCharts()" style="width: 100%; padding: 8px 12px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg-light); color: var(--text-primary); cursor: pointer;">
+                <option value="">All Subjects</option>
+              </select>
+            </div>
+            
+            <!-- Reset Button -->
+            <div class="filter-group" style="display: flex; align-items: flex-end;">
+              <button onclick="resetAttendanceFilters()" style="width: 100%; padding: 8px 12px; background: var(--secondary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: var(--transition);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1';">🔄 Reset</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts Grid - 3 Charts -->
+<div class="charts-grid">
+          <!-- Main Attendance Chart -->
+          <div class="chart-container">
+            <h3 class="chart-title">📊 Attendance Overview</h3>
+            <canvas id="attendanceChart" height="250"></canvas>
+          </div>
+          <!-- Detailed Breakdown Chart (Updates based on filters) -->
+       
+          <!-- Comparison Chart (Missing canvas fixed) -->
+          <div class="chart-container">
+            <h3 class="chart-title" id="comparisonTitle">📊 Department Comparison</h3>
+            <canvas id="comparisonChart" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prediction Tab -->
+      <div id="predictionTab" class="tab-content">
+        <div class="section-title">🔮 Student Performance Prediction & Failure Analysis</div>
+        
+        <!-- Prediction Filters Section -->
+        <div class="filter-section" style="background: var(--bg-card); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: var(--shadow);">
+          <div class="filters-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+            
+            <!-- Year Selection -->
+            <div class="filter-group">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">📚 Year:</label>
+              <select id="predictionYear" onchange="updatePredictionCharts()" style="width: 100%; padding: 8px 12px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg-light); color: var(--text-primary); cursor: pointer;">
+                <option value="">All Years</option>
+                <option value="1st year">1st Year</option>
+                <option value="2nd year">2nd Year</option>
+                <option value="3rd year">3rd Year</option>
+              </select>
+            </div>
+            
+            <!-- Department Selection -->
+            <div class="filter-group">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">🏢 Department:</label>
+              <select id="predictionDept" onchange="updatePredictionCharts()" style="width: 100%; padding: 8px 12px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg-light); color: var(--text-primary); cursor: pointer;">
+                <option value="">All Departments</option>
+                <option value="BCA">BCA</option>
+                <option value="BCom">BCom</option>
+                <option value="BBA">BBA</option>
+                <option value="BSc">BSc</option>
+                <option value="BA">BA</option>
+              </select>
+            </div>
+            
+            <!-- Subject Selection -->
+            <div class="filter-group">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">📖 Subject:</label>
+              <select id="predictionSubject" onchange="updatePredictionCharts()" style="width: 100%; padding: 8px 12px; border: 2px solid var(--border); border-radius: 6px; background: var(--bg-light); color: var(--text-primary); cursor: pointer;">
+                <option value="">All Subjects</option>
+              </select>
+            </div>
+            
+            <!-- Reset Button -->
+            <div class="filter-group" style="display: flex; align-items: flex-end;">
+              <button onclick="resetPredictionFilters()" style="width: 100%; padding: 8px 12px; background: var(--secondary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: var(--transition);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1';">🔄 Reset</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Prediction Charts Grid - Overview, Comparison, Department Analysis -->
+        <div class="charts-grid">
+          <!-- Overview Chart -->
+          <div class="chart-container">
+            <h3 class="chart-title"> Performance Overview</h3>
+            <canvas id="predOverviewChart" height="250"></canvas>
+          </div>
+          <!-- Comparison Chart -->
+         
+          <!-- Failure Analysis -->
+          <div class="chart-container">
+            <h3 class="chart-title" id="failureTitle"> Subject Failure Analysis</h3>
+            <canvas id="failureAnalysisChart" height="250"></canvas>
+          </div>
+          
+          <!-- High Performers Chart - NEW -->
+          <div class="chart-container">
+            <h3 class="chart-title">🏆 High Student Performance</h3>
+            <canvas id="highPerformersChart" height="250"></canvas>
+          </div>
+          
+          <!-- Low Performers Chart - NEW LOW -->
+          <div class="chart-container">
+            <h3 class="chart-title">📉 Low Marks Students (<35%)</h3>
+            <canvas id="lowPerformersChart" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+<div id="notificationsPanel" class="notifications-panel">
+        <div class="notifications-header">
+            <h4>🔔 Notifications</h4>
+            <span class="notifications-count" id="panelUnreadCount">0 unread</span>
+            <button class="close-btn" onclick="closeNotifications()">×</button>
+        </div>
+        <ul id="notificationsList"></ul>
+        <div class="notifications-footer">
+            <button class="mark-read-btn" onclick="markAllRead()">Mark all read</button>
+            <button class="clear-all-btn" onclick="clearAllNotifications()">Clear all</button>
+        </div>
+    </div>
+
+    <!-- Notifications Backdrop -->
+    <div class="notifications-backdrop" id="notificationsBackdrop" onclick="closeNotifications()"></div>
+
+
+  <script src="analysis.js"></script>
+
+</body>
+</html>

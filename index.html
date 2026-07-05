@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>College Monitoring System</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --speed: 0.5s;
+    --accent: #a855f7;
+    --glow: rgba(168, 85, 247, 0.6);
+    --glass-bg: rgba(15, 5, 30, 0.6);
+    --text-color: #ffffff;
+}
+
+/* --- THEMES --- */
+body.role-teacher {
+    --accent: #f472b6;
+    --glow: rgba(244, 114, 182, 0.6);
+    --glass-bg: rgba(10, 0, 10, 0.7);
+    --text-color: #ffffff;
+}
+
+* { 
+    margin: 0; padding: 0; box-sizing: border-box; 
+    font-family: 'Outfit', sans-serif; 
+}
+
+body {
+    height: 100vh; display: flex; justify-content: center; align-items: center;
+    background: url('clg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+}
+
+body::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+canvas#particles { position: absolute; z-index: 2; pointer-events: none; }
+
+/* --- THE GLASS BOX --- */
+.glass {
+    position: relative; z-index: 3;
+    width: 90%;
+    max-width: 450px; 
+    padding: 50px 30px;
+    text-align: center;
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    border-radius: 40px;
+    background: var(--glass-bg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 0 0 15px var(--glow);
+    animation: shadowPulse 3s infinite ease-in-out;
+}
+
+@keyframes shadowPulse {
+    0%, 100% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 0 0 10px var(--glow); }
+    50% { box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4), 0 0 25px var(--glow); }
+}
+
+/* --- WRAPPING TEXT EFFECT --- */
+.typing-text {
+    display: block;
+    overflow: hidden;
+    white-space: normal; 
+    color: var(--text-color); 
+    font-size: 2rem; 
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    margin-bottom: 25px;
+    
+    max-height: 0;
+    opacity: 0;
+    animation: revealText 1.5s ease-out forwards;
+}
+
+@keyframes revealText { 
+    from { max-height: 0; opacity: 0; transform: translateY(10px); } 
+    to { max-height: 200px; opacity: 1; transform: translateY(0); } 
+}
+
+/* --- PROGRESS SECTION --- */
+.progress-zone { width: 100%; position: relative; padding: 45px 0 10px 0; }
+
+#runner { 
+    position: absolute; top: 0; left: -20px; 
+    font-size: 1.8rem; 
+    z-index: 4;
+}
+
+.progress-bar { 
+    width: 100%; height: 10px; 
+    background: rgba(255,255,255,0.1); 
+    border-radius: 20px; overflow: hidden; 
+}
+
+.progress { 
+    height: 100%; width: 0%; 
+    background: var(--accent); 
+    box-shadow: 0 0 15px var(--accent); 
+    transition: width 0.1s linear;
+}
+
+#percent { 
+    color: var(--text-color); 
+    margin-top: 15px; 
+    font-weight: 700; 
+}
+
+/* --- LOGIN ELEMENTS --- */
+.title { 
+    color: var(--text-color); font-size: 1.8rem; font-weight: 700; 
+    margin-bottom: 30px; letter-spacing: 2px;
+}
+
+.role-btns { display: flex; gap: 12px; margin: 20px 0; }
+.role-btns button { 
+    flex: 1; padding: 12px; border-radius: 12px; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-color); cursor: pointer; font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.role-btns button.active {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 15px var(--glow);
+}
+
+input { 
+    width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1);
+    color: var(--text-color); outline: none; 
+}
+
+.captcha { 
+    background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; 
+    letter-spacing: 5px; font-weight: 800; color: var(--accent); 
+    border: 1px dashed var(--accent); margin: 15px 0;
+}
+
+.login-btn { 
+    width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--accent); 
+    background: transparent; color: var(--text-color); 
+    font-weight: 700; cursor: pointer; margin-top: 15px;
+    box-shadow: 0 0 15px var(--glow); text-transform: uppercase;
+}
+
+.forgot-link { display: block; font-size: 0.85rem; margin-top: 15px; cursor: pointer; color: var(--accent); text-decoration: underline; }
+#dobContainer { text-align: left; margin-top: 5px; color: var(--text-color); }
+</style>
+</head>
+<body class="role-admin">
+
+<canvas id="particles"></canvas>
+
+<div id="loading" class="glass">
+    <div class="typing-text">WELCOME TO <br> ARYA COLLEGE</div>
+    <div class="progress-zone">
+        <div id="runner">🏃‍♂️</div>
+        <div class="progress-bar"><div class="progress" id="progress"></div></div>
+    </div>
+    <div id="percent">0%</div>
+</div>
+
+<div id="login" class="glass" style="display:none;">
+    <div class="title" id="formTitle">ACCESS PORTAL</div>
+    
+    <div class="role-btns">
+        <button id="adminBtn" class="active" onclick="setRole('admin', this)">Admin</button>
+        <button id="teacherBtn" onclick="setRole('teacher', this)">Teacher</button>
+    </div>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    
+    <div id="dobContainer" style="display:none;">
+        <label style="font-size: 0.8rem; opacity: 0.8;">Birth Date Verification:</label>
+        <input type="date" id="dobInput">
+    </div>
+
+    <div class="captcha" id="captcha">XXXXX</div>
+    <input type="text" id="captchaInput" placeholder="Enter Captcha">
+
+    <span class="forgot-link" id="forgotBtn" onclick="toggleForgot()"> Forgot Password?</span>
+    <button class="login-btn" onclick="handleAuth()"> LOGIN </button>
+</div>
+
+<script>
+let i = 0;
+const interval = setInterval(() => {
+    i++;
+    document.getElementById("progress").style.width = i + "%";
+    document.getElementById("runner").style.left = `calc(${i}% - 30px)`;
+    document.getElementById("percent").innerText = i + "%";
+    if(i >= 100) {
+        clearInterval(interval);
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("login").style.display = "block";
+        generateCaptcha();
+    }
+}, 40);
+
+let currentRole = "admin";
+let isForgotMode = false;
+let captchaCode = "";
+
+function setRole(role, btn) {
+    currentRole = role;
+    document.querySelectorAll(".role-btns button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    updateRoleClass();
+    generateCaptcha();
+}
+
+function updateRoleClass() {
+    document.body.className = "role-" + currentRole;
+}
+
+function generateCaptcha() {
+    captchaCode = Math.random().toString(36).substring(2,7).toUpperCase();
+    document.getElementById("captcha").innerText = captchaCode;
+}
+
+function toggleForgot() {
+    isForgotMode = !isForgotMode;
+    document.getElementById("password").style.display = isForgotMode ? "none" : "block";
+    document.getElementById("dobContainer").style.display = isForgotMode ? "block" : "none";
+    document.getElementById("forgotBtn").innerText = isForgotMode ? "← Back to Login" : "Forgot Password?";
+    document.getElementById("formTitle").innerText = isForgotMode ? "VERIFY" : "ACCESS PORTAL";
+}
+
+function handleAuth() {
+    const capInput = document.getElementById("captchaInput").value.trim().toUpperCase();
+    
+    // CAPTCHA validation
+    if(capInput === "") { 
+        alert("❌ Please enter the CAPTCHA!");
+        generateCaptcha(); 
+        return; 
+    }
+    
+    if(capInput !== captchaCode) { 
+        alert("❌ Invalid Captcha!");
+        generateCaptcha(); 
+        return; 
+    }
+    
+    if(isForgotMode) {
+        const dob = document.getElementById("dobInput").value;
+        if(!dob) {
+            alert("⚠️ Please enter your date of birth!");
+            return;
+        }
+        if(currentRole === 'admin' && dob === '2005-09-29') {
+            window.location.href = "admin.html";
+            return;
+        }
+        else if(currentRole === 'teacher' && (dob === '2005-09-18' || dob === '2005-11-29')) {
+            window.location.href = "teacher.html";
+            return;
+        }
+        else {
+            alert("❌ Verification Failed! Incorrect Date of Birth.");
+        }
+        return;
+    } 
+    else {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        
+        if(!username) { 
+            alert("⚠️ Please enter the username!"); 
+            return; 
+        }
+        
+        if(!password) { 
+            alert("⚠️ Please enter the password!"); 
+            return; 
+        }
+        
+        // --- NEW: CONNECT TO BACKEND ---
+        fetch('http://127.0.0.1:5000/api/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                role: currentRole
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                // Save login info
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userRole', currentRole);
+                localStorage.setItem('username', username);
+                
+                // Redirect based on role
+                if(currentRole === 'admin') {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "teacher.html";
+                }
+            } else {
+                alert("❌ Login Failed! " + (data.message || "Invalid credentials"));
+                generateCaptcha();
+                document.getElementById("captchaInput").value = "";
+            }
+        })
+        .catch(error => {
+            console.log("Backend not running, using local login");
+            // FALLBACK: Local login if backend not running
+            if(username === "admin" && password === "admin123" && currentRole === 'admin') {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userRole', 'admin');
+                window.location.href = "admin.html";
+            }
+            else if(username === "teacher" && password === "teacher123" && currentRole === 'teacher') {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userRole', 'teacher');
+                window.location.href = "teacher.html";
+            }
+            else {
+                alert("❌ Invalid credentials! Admin: admin/admin123, Teacher: teacher/teacher123");
+                generateCaptcha();
+            }
+        });
+    }
+}
+
+function init() {
+    w = window.innerWidth; h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    particles = [];
+    for(let i = 0; i < 60; i++) {
+        particles.push({x: Math.random()*w, y: Math.random()*h, r: Math.random()*2+1, s: Math.random()*0.5+0.1, alpha: Math.random()*0.5});
+    }
+}
+
+function draw() {
+    ctx.clearRect(0, 0, w, h);
+    const color = getComputedStyle(document.body).getPropertyValue('--accent').trim();
+    particles.forEach(p => {
+        ctx.fillStyle = color;
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+        p.y += p.s; if(p.y > h) p.y = 0;
+    });
+    requestAnimationFrame(draw);
+}
+init(); draw();
+window.addEventListener('resize', init);
+</script>
+</body>
+</html>

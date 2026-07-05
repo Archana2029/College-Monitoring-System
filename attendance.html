@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Attendance System - College Monitoring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+/* ===== Attendance - Exact Index.html Theme ===== */
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Professional Color Variables - Light Theme */
+:root {
+  --primary: #1e293b;
+  --secondary: #0f766e;
+  --accent: #f59e0b;
+  --bg-light: #f8fafc;
+  --bg-card: #ffffff;
+  --text-primary: #101111;
+  --text-secondary: #64748b;
+  --text-light: #94a3b8;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --border: #e2e8f0;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.1);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --transition: all 0.3s ease;
+}
+
+
+/* Dark Theme Variables */
+body.dark-theme {
+  --primary: #e2e8f0;
+  --secondary: #3b82f6;
+  --accent: #60a5fa;
+  --bg-light: #0f172a;
+  --bg-card: #1e293b;
+}
+
+/* Fix header in dark mode */
+body.dark-theme .navbar {
+  background: #0f172a !important;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+  height: 70px;
+  background: linear-gradient(135deg, var(--primary), #334155);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  transition: background 0.3s ease;
+}
+
+
+
+
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--secondary), var(--accent));
+}
+
+.menu-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.menu-icon:hover {
+  background: rgba(29, 28, 28, 0.1);
+  transform: scale(1.1);
+}
+
+.navbar h2 {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification-bell {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.notification-bell:hover {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  transform: scale(1.05);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--error);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 18px;
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.logout {
+  background: linear-gradient(135deg, var(--error), #dc2626);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.logout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: var(--bg-card);
+  box-shadow: 4px 0 25px rgba(0, 0, 0, 0.1);
+  padding-top: 90px;
+  transition: 0.35s ease;
+  z-index: 999;
+  border-right: 1px solid var(--border);
+}
+
+body.dark-theme .sidebar {
+  background: #1e293b;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+/* Fix notification text in dark mode */
+body.dark-theme .notification-message {
+  color: #ffffff !important;
+}
+
+body.dark-theme .notification-time {
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .notification-item {
+  background: #1e293b !important;
+  border-bottom-color: #334155 !important;
+}
+
+body.dark-theme .notification-item.unread {
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.15), transparent) !important;
+  border-left-color: #60a5fa !important;
+}
+
+body.dark-theme .notifications-header {
+  background: #0f172a !important;
+}
+
+body.dark-theme .close-btn {
+  color: white !important;
+}
+
+body.dark-theme .notifications-count {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 25px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--secondary), #0d9488);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+}
+
+.sidebar-header span {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 15px;
+}
+
+.sidebar ul li {
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar ul li:hover {
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--secondary);
+  transform: translateX(5px);
+}
+
+.sidebar ul li.active {
+  background: linear-gradient(135deg, var(--secondary), #0d9488);
+  color: white;
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 998;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* ===== Main Content ===== */
+.main {
+  margin-top: 90px;
+  padding: 40px;
+  transition: 0.35s ease;
+  min-height: calc(100vh - 90px);
+  background: var(--bg-light);
+}
+
+body.dark-theme .main {
+  background: #0f172a;
+}
+
+
+.content-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+/* ===== Cards ===== */
+.card {
+  background: var(--bg-card);
+  padding: 35px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.card h2, .card h3 {
+  margin-bottom: 25px;
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* ===== Forms & Filters ===== */
+.form-row, .filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+body.dark-theme label {
+  color: #e2e8f0;
+}
+
+input, select {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  background: var(--bg-light);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+body.dark-theme input, body.dark-theme select {
+  background: #475569;
+  color: #ffffff;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+}
+
+.btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--secondary), #0d9488);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+  margin-right: 10px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+}
+
+.btn.success {
+  background: linear-gradient(135deg, var(--success), #059669);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+/* Attendance Specific */
+.student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 20px 0;
+}
+
+.student-card {
+  background: var(--bg-card);
+  padding: 25px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.student-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.student-name {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.student-details {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.attendance-status {
+  display: flex;
+  gap: 20px;
+}
+
+.status-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.status-radio input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--secondary);
+}
+
+.status-badge {
+  padding: 6px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.status-present {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.status-absent {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+th, td {
+  padding: 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: linear-gradient(135deg, var(--primary), #334155);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+tr:hover {
+  background: rgba(15, 118, 110, 0.05);
+}
+
+/* Report Specific */
+.report-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.tab-btn-report {
+  padding: 12px 24px;
+  background: var(--bg-light);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.tab-btn-report:hover, .tab-btn-report.active {
+  background: var(--secondary);
+  color: white;
+  border-color: var(--secondary);
+}
+
+.report-panel {
+  display: none;
+}
+
+.report-panel.active {
+  display: block;
+}
+
+.today-summary {
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: white;
+  padding: 30px;
+  border-radius: var(--radius);
+  margin-bottom: 30px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.summary-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.summary-stat {
+  text-align: center;
+}
+
+.summary-stat .stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.summary-stat .stat-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Notifications Panel */
+.notifications-panel {
+  position: fixed;
+  top: 90px;
+  right: -400px;
+  width: 380px;
+  height: calc(100vh - 90px);
+  background: var(--bg-card);
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.2);
+  z-index: 2001;
+  transition: right 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notifications-panel.open {
+  right: 0;
+}
+
+.notifications-header {
+  padding: 20px 25px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: space-between;
+  background: linear-gradient(135deg, var(--primary), #334155);
+  color: white;
+}
+
+.notifications-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.notifications-count {
+  background: var(--success);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#notificationsList {
+  flex: 1;
+  list-style: none;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-item {
+  padding: 20px 25px;
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.notification-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-theme .notification-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.notification-item.unread {
+  background: linear-gradient(90deg, rgba(var(--accent), 0.1), transparent);
+  border-left: 4px solid var(--accent);
+}
+
+.notification-message {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.notification-message strong {
+  font-weight: 700;
+}
+
+.notification-message em {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.notifications-footer {
+  padding: 20px 25px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  background: var(--bg-light);
+}
+
+.mark-read-btn, .clear-all-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+.mark-read-btn {
+  background: var(--info);
+  color: white;
+}
+
+.clear-all-btn {
+  background: var(--error);
+  color: white;
+}
+
+@keyframes slideInNotification {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.notifications-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+
+.notifications-backdrop.open {
+  display: block;
+}
+/* FIX ALL TEXT IN DARK MODE - BLUE THEME */
+body.dark-theme .tab-btn-report,
+body.dark-theme .dept-tab {
+  color: #ffffff !important;
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+}
+
+body.dark-theme .tab-btn-report.active,
+body.dark-theme .tab-btn-report:hover,
+body.dark-theme .dept-tab.active,
+body.dark-theme .dept-tab:hover {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+body.dark-theme th {
+  background: #1e3a5f !important;
+  color: white !important;
+}
+
+body.dark-theme td,
+body.dark-theme .student-name,
+body.dark-theme .student-details,
+body.dark-theme label,
+body.dark-theme .sidebar ul li,
+body.dark-theme .sidebar-header span,
+body.dark-theme .card h2,
+body.dark-theme .card h3,
+body.dark-theme .notification-message {
+  color: #ffffff !important;
+}
+
+body.dark-theme input,
+body.dark-theme select {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme input::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .student-card {
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+}
+
+body.dark-theme .today-summary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+}
+
+/* Fix notification text in dark mode - ADD THIS BLOCK */
+body.dark-theme .notification-message {
+  color: #ffffff !important;
+}
+
+body.dark-theme .notification-time {
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .notification-item {
+  background: #1e293b !important;
+  border-bottom-color: #334155 !important;
+}
+
+body.dark-theme .notification-item.unread {
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.15), transparent) !important;
+  border-left-color: #60a5fa !important;
+}
+
+body.dark-theme .notifications-header {
+  background: #0f172a !important;
+}
+
+body.dark-theme .close-btn {
+  color: white !important;
+}
+
+body.dark-theme .notifications-count {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+body.dark-theme .status-present {
+  color: #34d399 !important;
+}
+
+body.dark-theme .status-absent {
+  color: #f87171 !important;
+}
+
+/* Responsive -->
+@media (max-width: 768px) {
+  .main {
+    padding: 20px 15px;
+  }
+  
+  .form-row, .filters {
+    grid-template-columns: 1fr;
+  }
+  
+  .student-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  table {
+    font-size: 14px;
+  }
+  
+  th, td {
+    padding: 12px 8px;
+  }
+  
+  .sidebar {
+    width: 100vw;
+    left: -100vw;
+  }
+  
+  .sidebar.active {
+    left: 0;
+  }
+  
+  .notifications-panel {
+    width: 100vw;
+    right: -100vw;
+  }
+  
+  .notifications-panel.open {
+    right: 0;
+  }
+}
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+        <h2><i class="fas fa-calendar-check"></i> Attendance System</h2>
+        <div class="navbar-right">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+            <button class="notification-bell" onclick="toggleNotifications()" title="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <button class="logout" onclick="goToTeacher()">Teacher</button>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="user-avatar">👨‍🏫</div>
+            <span>Attendance Admin</span>
+        </div>
+        <ul>
+            <li onclick="showSection('mark')" id="markNav"><i class="fas fa-check-circle"></i> Mark Attendance</li>
+            <li onclick="showSection('details')" id="detailsNav"><i class="fas fa-list"></i> Attendance Details</li>
+            <li onclick="showSection('report')" id="reportNav"><i class="fas fa-chart-bar"></i> Reports</li>
+        </ul>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="content-wrapper">
+            <!-- Mark Attendance Section -->
+            <section id="markSection" class="section active">
+                <div class="card">
+                    <h2><i class="fas fa-calendar-check"></i> Mark Today's Attendance</h2>
+                    <div class="filters">
+                        <div class="form-group">
+                            <label>Date:</label>
+                            <input type="date" id="attendanceDate" value="">
+                        </div>
+                        <div class="form-group">
+                            <label>Department:</label>
+                            <select id="deptFilter">
+                                <option value="">All Depts</option>
+                                <option value="BCA">BCA</option>
+                                <option value="BBA">BBA</option>
+                                <option value="BSc">BSc</option>
+                                <option value="BCom">BCom</option>
+                                <option value="BA">BA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Year:</label>
+                            <select id="yearFilter">
+                                <option value="">All Years</option>
+                                <option value="1st year">1st year</option>
+                                <option value="2nd year">2nd year</option>
+                                <option value="3rd year">3rd year</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject:</label>
+                            <select id="subjectFilter">
+                                <option value="">Select Subject</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="loadStudents()">Load Students</button>
+                        <button class="btn success" onclick="markAllPresent()">Select All Present</button>
+                        
+                        
+                    </div>
+                    <div id="studentList" class="student-grid">
+                        <!-- Students loaded dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Details Section -->
+            <section id="detailsSection" class="section">
+                <div class="card">
+                    <h2><i class="fas fa-list"></i> Attendance Details</h2>
+                    <div class="filters">
+                        <div class="form-group">
+                            <label>Date:</label>
+                            <input type="date" id="dateFilterDetails">
+                        </div>
+                        <div class="form-group">
+                            <label>Department:</label>
+                            <select id="detailsDept">
+                                <option value="">All Depts</option>
+                                <option value="BCA">BCA</option>
+                                <option value="BBA">BBA</option>
+                                <option value="BSc">BSc</option>
+                                <option value="BCom">BCom</option>
+                                <option value="BA">BA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Year:</label>
+                            <select id="detailsYear">
+                                <option value="">All Years</option>
+                                <option value="1st year">1st year</option>
+                                <option value="2nd year">2nd year</option>
+                                <option value="3rd year">3rd year</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject:</label>
+                            <select id="detailsSubject">
+                                <option value="">All Subjects</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Search:</label>
+                            <input type="text" id="searchDetails" placeholder="Name/ID">
+                        </div>
+                        <button class="btn" onclick="loadDetails()">Filter</button>
+                    </div>
+                    <table id="detailsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Dept</th>
+                                <th>Year</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Subject</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Report Section -->
+            <section id="reportSection" class="section">
+                <div class="card">
+                    <h2><i class="fas fa-chart-bar"></i> Attendance Report</h2>
+                    <div class="report-tabs">
+                        <button class="tab-btn-report active" onclick="showReport('daily')">Daily Report</button>
+                        <button class="tab-btn-report" onclick="showReport('monthly')">Monthly Report</button>
+                    </div>
+
+                    <!-- Daily Report -->
+                    <div id="dailyReport" class="report-panel active">
+                        <div class="today-summary" id="todaySummary"></div>
+                        <div class="filters">
+                            <div class="form-group">
+                                <label>Date:</label>
+                                <input type="date" id="dailyDateFilter">
+                            </div>
+                            <div class="form-group">
+                                <label>Department:</label>
+                                <select id="dailyDept">
+                                    <option value="">All Depts</option>
+                                    <option value="BCA">BCA</option>
+                                    <option value="BBA">BBA</option>
+                                    <option value="BSc">BSc</option>
+                                    <option value="BCom">BCom</option>
+                                    <option value="BA">BA</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Year:</label>
+                                <select id="dailyYear">
+                                    <option value="">All Years</option>
+                                    <option value="1st year">1st year</option>
+                                    <option value="2nd year">2nd year</option>
+                                    <option value="3rd year">3rd year</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject:</label>
+                                <select id="dailySubject">
+                                    <option value="">All Subjects</option>
+                                </select>
+                            </div>
+                            <button class="btn" onclick="loadDailyReport()">Filter</button>
+                        </div>
+                        <table id="dailyTable">
+                            <thead>
+                                <tr>
+                                    <th>Dept</th>
+                                    <th>Year</th>
+                                    <th>Subject</th>
+                                    <th>Present</th>
+                                    <th>Absent</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Monthly Report -->
+                    <div id="monthlyReport" class="report-panel">
+                        <div class="filters">
+                            <div class="form-group">
+                                <label>Month:</label>
+                                <input type="month" id="monthlyMonth">
+                            </div>
+                            <div class="form-group">
+                                <label>Department:</label>
+                                <select id="monthlyDept">
+                                    <option value="">All Depts</option>
+                                    <option value="BCA">BCA</option>
+                                    <option value="BBA">BBA</option>
+                                    <option value="BSc">BSc</option>
+                                    <option value="BCom">BCom</option>
+                                    <option value="BA">BA</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Year:</label>
+                                <select id="monthlyYear">
+                                    <option value="">All Years</option>
+                                    <option value="1st year">1st year</option>
+                                    <option value="2nd year">2nd year</option>
+                                    <option value="3rd year">3rd year</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject:</label>
+                                <select id="monthlySubject">
+                                    <option value="">All Subjects</option>
+                                </select>
+                            </div>
+                            <button class="btn" onclick="loadMonthlyReport()">Filter</button>
+                        </div>
+                        <table id="monthlyTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Present Days</th>
+                                    <th>Absent Days</th>
+                                    <th>Total Days Ascent</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Notifications Panel -->
+    <div id="notificationsPanel" class="notifications-panel">
+        <div class="notifications-header">
+            <h4><i class="fas fa-bell"></i> Notifications</h4>
+            <span class="notifications-count" id="panelUnreadCount">0 unread</span>
+            <button class="close-btn" onclick="closeNotifications()">×</button>
+        </div>
+        <ul id="notificationsList"></ul>
+        <div class="notifications-footer">
+            <button class="mark-read-btn" onclick="markAllRead()">Mark all read</button>
+            <button class="clear-all-btn" onclick="clearAllNotifications()">Clear all</button>
+        </div>
+    </div>
+
+    <!-- Notifications Backdrop -->
+    <div class="notifications-backdrop" id="notificationsBackdrop" onclick="closeNotifications()"></div>
+
+    <script src="attendance.js"></script>
+    <script>
+        // Minimal UI helpers - NO attendance logic changes
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const icon = document.getElementById('themeIcon');
+            if (document.body.classList.contains('dark-theme')) {
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('attendanceTheme', 'dark');
+            } else {
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('attendanceTheme', 'light');
+            }
+        }
+
+        function goToTeacher() {
+            window.location.href = 'teacher.html';
+        }
+
+        // Simple notifications stub (extendable)
+        let notifications = JSON.parse(localStorage.getItem('attendanceNotifications')) || [];
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            const backdrop = document.getElementById('notificationsBackdrop');
+            panel.classList.toggle('open');
+            backdrop.classList.toggle('open');
+            renderNotifications();
+        }
+
+        function closeNotifications() {
+            document.getElementById('notificationsPanel').classList.remove('open');
+            document.getElementById('notificationsBackdrop').classList.remove('open');
+        }
+
+        function generateAlert(type, message) {
+            const alert = {
+                id: Date.now(),
+                type: type,
+                message: message,
+                timestamp: new Date().toLocaleString(),
+                read: false
+            };
+            notifications.unshift(alert);
+            localStorage.setItem('attendanceNotifications', JSON.stringify(notifications));
+            updateNotificationBadge();
+        }
+
+        function updateNotificationBadge() {
+            const unread = notifications.filter(n => !n.read).length;
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = unread > 99 ? '99+' : unread;
+            badge.style.display = unread > 0 ? 'flex' : 'none';
+        }
+
+        function renderNotifications() {
+            const list = document.getElementById('notificationsList');
+            const unreadCount = document.getElementById('panelUnreadCount');
+            const unread = notifications.filter(n => !n.read).length;
+            unreadCount.textContent = `${unread} unread`;
+            
+            if (notifications.length === 0) {
+                list.innerHTML = '<li class="notification-item" style="text-align:center;color:var(--text-light);padding:40px 20px;">No notifications</li>';
+                return;
+            }
+            
+            list.innerHTML = notifications.slice(0, 20).map(n => `
+                <li class="notification-item ${n.read ? '' : 'unread'}">
+                    <div class="notification-message">${n.message}</div>
+                    <div class="notification-time">${n.timestamp}</div>
+                </li>
+            `).join('');
+        }
+
+        function markAllRead() {
+            notifications.forEach(n => n.read = true);
+            localStorage.setItem('attendanceNotifications', JSON.stringify(notifications));
+            updateNotificationBadge();
+            renderNotifications();
+        }
+
+        function clearAllNotifications() {
+            notifications = [];
+            localStorage.setItem('attendanceNotifications', JSON.stringify(notifications));
+            updateNotificationBadge();
+            renderNotifications();
+        }
+
+        // Load theme
+       
+				
+				
+			// Load theme
+window.addEventListener('load', function() {
+    if (localStorage.getItem('attendanceTheme') === 'dark') {
+        toggleTheme();
+    }
+    updateNotificationBadge();
+});
+				
+				
+				
+			
+
+        // Override showSection to update sidebar active state
+        const originalShowSection = window.showSection;
+        window.showSection = function(sectionId) {
+            if (originalShowSection) originalShowSection(sectionId);
+            
+            // Update sidebar active
+            document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
+            const navId = sectionId + 'Nav';
+            const nav = document.getElementById(navId);
+            if (nav) nav.classList.add('active');
+            
+            toggleSidebar(); // Close sidebar on select
+        };
+    </script>
+</body>
+</html>
